@@ -301,7 +301,7 @@ tournament('shriners-childrens-open')
 course('US Open'.lower())
 '''
 
-schedule = ['wm-phoenix-open']
+schedule = ['genesis-invitational', 'the-honda-classic']
 for i in schedule:
 	try:
 		tournament(i)
