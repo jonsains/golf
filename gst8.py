@@ -293,14 +293,14 @@ def course(tname):
 	for i in scoreav:
 		aves.append(i.text.split()[0])
 	df2 = pd.DataFrame({'hole': h, 'par': p, 'yards': y, 'averagescore': aves})
-	df2.to_csv(tname + 'course21.csv', encoding='utf-8')
+	df2.to_csv(tname + 'course21.csv', encoding='utf-8', index=False)
 '''
 tournament('shriners-childrens-open')
 '''
-'''
-course('US Open'.lower())
-'''
 
+course('farmers-insurance-open'.lower())
+
+'''
 schedule = ['genesis-invitational', 'the-honda-classic']
 for i in schedule:
 	try:
@@ -308,7 +308,7 @@ for i in schedule:
 	except:
 		print(i + ' fail')
 
- 
+'''
 #		url = "https://www.pgatour.com/competition/2019/safeway-open/leaderboard.html"
 #tournament('safeway.csv', 'https://www.pgatour.com/competition/2019/safeway-open/leaderboard.html')
 #print(tournament.tname)	 
