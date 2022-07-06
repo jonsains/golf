@@ -12,70 +12,106 @@ import time
 from datetime import timedelta
 from datetime import datetime
 from os.path import exists 
-
-
-
+'''
+extratournament = pd.DataFrame(np.array([['test-open']]), columns = ['tournamentname'])
+print(extratournament)
+extratournament.to_csv('/Users/jonsa/OneDrive/Documents/code/tournamentsread.csv')
+'''
 #create a function that creates/updates the player files
-def playerupdate(tournamentname, course):  
+def playerupdate(tournamentname, course):
+    #check this tournament hasn't been done before:
+    readtourneys = pd.read_csv('tournamentsread.csv')
+    print(readtourneys['tournamentname'])
+    if course in readtourneys['tournamentname'].to_list():
+        print('ALREADY UPDATED!')
+  
+    else:
     #1 read in the data and get it in a nice format
   
-    tourneyscores = pd.read_csv(tournamentname + '.csv')
-    #print(tourneyscores.columns)
-    newcols = ['index','name']
-    holes = range(1,73,1)
-    newcols += holes
-    #print(newcols)
-    tourneyscores.columns = newcols
+        tourneyscores = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + tournamentname + '.csv')
+        #print(tourneyscores.columns)
+        newcols = ['index','name']
+        holes = range(1,73,1)
+        newcols += holes
+        #print(newcols)
+        tourneyscores.columns = newcols
 
-    tourneyscores.set_index('name', inplace=True)
-    tourneyscores.drop('index', axis=1, inplace=True)
-    #print(tourneyscores.head())
-    #print('vhel')
+        tourneyscores.set_index('name', inplace=True)
+        tourneyscores.drop('index', axis=1, inplace=True)
+        #print(tourneyscores.head())
+        #print('vhel')
+        
+        #2 for each player name, check if the csv exists and create it if it doesn't
+        playercols = ['hole','score','round', 'par', 'yards', 'average_score','location', 'date', 'temp', 'wind', 'rain']
+        for player in tourneyscores.index:
+            if os.path.exists('/Users/jonsa/OneDrive/Documents/code/players/' + str(player) + '.csv'):
+                pass
+                print(str(player) + ' player file already exists')
+            else:
+                print('creating file for ' + str(player))
+                df = pd.DataFrame(columns= playercols)
+                print(player)
+                df.to_csv('/Users/jonsa/OneDrive/Documents/code/players/' + str(player) + '.csv')
+        
+        #3 for each player name create a list of lists comprised of hole number and score and round, making sure hole number is still correct after nans are removed
+
+            #newrows = tourneyscores.loc[player].values.tolist()
+            test = tourneyscores.loc[player]
+            #print(test)
+            newrows = [[test.index[x]%18 , test[test.index[x]], (((test.index[x] - 1)//18) + 1)] for x in range(0, len(test))]
+            for x in newrows:
+                if x[0] == 0:
+                    x[0] += 18
+            newrows = [x for x in newrows if str(x[1]) != "nan"]
+            #newrows = [[y, x] for x in newrows if str(x) != "nan"]   [test.index[x], test[x]]
+            print(newrows)
+        #create a dataframe with hole score and round
+            holesandscores = pd.DataFrame(np.array(newrows), columns=['hole', 'score','round'])
+        
+        #this looks to be working up to here
     
-    #2 for each player name, check if the csv exists and create it if it doesn't
-    playercols = ['hole','par','length','average_score','score']
-    for player in tourneyscores.index[-1:]:
-        if os.path.exists('/Users/jonsa/OneDrive/Documents/code/players/' + str(player) + '.csv'):
-            pass
-            #print(str(player))
-        else:
-            print('creating file for ' + str(player))
-            df = pd.DataFrame(columns= playercols)
-            #print(df.head)
-            df.to_csv('/Users/jonsa/OneDrive/Documents/code/players/' + str(player) + '.csv')
-    
-    #3 for each player name create a list lists comprised of hole number and score, making sure hole number is still correct after nans are removed
+        #3.1 import the course data and add par yards and average score to the player holes data
+            tourneyscores = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + course + 'course21.csv')
+            tourneyscores.index.name = 'ind2'
+            #print(tourneyscores)
+            playerdatawithcourse = pd.merge(holesandscores, tourneyscores,  how='left', left_on=['hole'], right_on = ['hole'])
+            
+            # add the date and location
+            timeandplace = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + tournamentname + 'additionalinfo.csv')
+            location = timeandplace.iloc[0]['location']
+            dayone = datetime.strptime(timeandplace.iloc[0]['startdate'], '%Y-%m-%d')
+            #dayone = timeandplace.iloc[0]['startdate']
+            print(type(dayone))
 
-        #newrows = tourneyscores.loc[player].values.tolist()
-        test = tourneyscores.loc[player]
-        print(range(len(test)))
-        newrows = [[test.index[x]%18 , test[test.index[x]]]  for x in range(0, len(test))]
-        for x in newrows:
-            if x[0] == 0:
-                x[0] += 18
-        newrows = [x for x in newrows if str(x[1]) != "nan"]
-        #newrows = [[y, x] for x in newrows if str(x) != "nan"]   [test.index[x], test[x]]
-        print(newrows)
-        holesandscores = pd.DataFrame(np.array(newrows), columns=['hole', 'score'])
-    
-    #this looks to be working up to here
-   
-    #3.1 first set up the course data
-        tourneyscores = pd.read_csv(course + 'course21.csv')
-        tourneyscores.index.name = 'ind2'
-        #print(tourneyscores)
-        playerdatawithcourse = pd.merge(holesandscores, tourneyscores,  how='left', left_on=['hole'], right_on = ['hole'])
-        print(playerdatawithcourse)
+            print(location)
+            #print(playerdatawithcourse[round])
+            playerdatawithcourse['location']= location
+            #playerdatawithcourse['date'] = dayone + timedelta(days=(playerdatawithcourse['round'] - 1) )
 
-    #3.2 get hole number and score
+            #rounddate = [dayone + timedelta(days=(int(roundnum) -1)) for roundnum in playerdatawithcourse[round]]
 
-    #3.3 add extra fields from course data
+            playerdatawithcourse['date'] = [dayone + timedelta(days=(int(roundnum) -1)) for roundnum in playerdatawithcourse['round']]
+            print(playerdatawithcourse)
 
-    #3.4 add to the player file
+            weatherinfo = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/golfweather.csv')
+            tournamentweather = weatherinfo.loc[weatherinfo['tournament-w'] == course]
+            
+            finalplayerdata = pd.merge(playerdatawithcourse, tournamentweather,  how='left', left_on=['round'], right_on = ['round-w'])
+            finalplayerdata.drop(['tournament-w', 'date-w' , 'round-w'], axis=1, inplace=True)
+            print(finalplayerdata)
+
+            #3.4 add to the main player file
+            extratournament = pd.DataFrame(np.array([[str(course)]]))
+            print(extratournament)
+            finalplayerdata.to_csv('/Users/jonsa/OneDrive/Documents/code/players/' + str(player) + '.csv', mode = 'a', header=False)
+            # add the tournament to the read tournaments list
+            with open('/Users/jonsa/OneDrive/Documents/code/tournamentsread.csv', 'a') as f:
+                extratournament.to_csv(f, header=False)
 
 
+
+#playerupdate("Jan262022farmers-insurance-open", "farmers-insurance-open")
 playerupdate("Jan262022farmers-insurance-open", "farmers-insurance-open")
-
 
 
 #"Jan262022farmers-insurance-open.csv"

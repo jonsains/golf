@@ -207,10 +207,10 @@ def get_year_sched(url):
 	for i in tourneys:
 		tourneylist.append(i.text)
 	return tourneylist
-'''
+
 schedule = get_year_sched('https://www.pgatour.com/tournaments/schedule.html')
 print(schedule)
-'''
+
 	
 
 
@@ -255,9 +255,9 @@ def tournament(tname, course = 'notentered'):
 	location = WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.XPATH,"//span[@class='name']"))).text
 
 	df = pd.DataFrame(dfdata)
-	df.to_csv(sdate + tname + '.csv', encoding='utf-8')
+	df.to_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + sdate + tname + '.csv', encoding='utf-8')
 	df2 = pd.DataFrame({'location': [location], 'startdate': [startdate]})
-	df2.to_csv(sdate + tname + 'additionalinfo.csv', encoding='utf-8')
+	df2.to_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + sdate + tname + 'additionalinfo.csv', encoding='utf-8')
 
 def course(tname):
 	tnameurl = tname.replace(' ','-').lower()
@@ -293,22 +293,24 @@ def course(tname):
 	for i in scoreav:
 		aves.append(i.text.split()[0])
 	df2 = pd.DataFrame({'hole': h, 'par': p, 'yards': y, 'averagescore': aves})
-	df2.to_csv(tname + 'course21.csv', encoding='utf-8', index=False)
-'''
-tournament('shriners-childrens-open')
-'''
+	df2.to_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + tname + 'course21.csv', encoding='utf-8', index=False)
 
-course('farmers-insurance-open'.lower())
+#tournament('shriners-childrens-open')
 
-'''
-schedule = ['genesis-invitational', 'the-honda-classic']
+
+#course('farmers-insurance-open'.lower())
+
+
+#[, 'Valspar Championship', 'World Golf Championships-Dell Technologies Match Play', 'Corales Puntacana Championship', 'Valero Texas Open', 'Masters Tournament', 'RBC Heritage', 'Zurich Classic of New Orleans', 'Mexico Open at Vidanta', 'Wells Fargo Championship', 'AT&T Byron Nelson', 'PGA Championship', 'Charles Schwab Challenge', 'the Memorial Tournament presented by Workday', 'RBC Canadian Open', 'U.S. Open', 'Travelers Championship', 'John Deere Classic', 'Barbasol Championship', 'Genesis Scottish Open', 'Barracuda Championship', 'The Open Championship', '3M Open', 'Rocket Mortgage Classic', 'Wyndham Championship', 'FedEx St. Jude Championship', 'BMW Championship', 'TOUR Championship']
+schedule = ['Puerto Rico Open', 'Arnold Palmer Invitational presented by Mastercard', 'THE PLAYERS Championship']
 for i in schedule:
 	try:
 		tournament(i)
 	except:
 		print(i + ' fail')
+	
 
-'''
+
 #		url = "https://www.pgatour.com/competition/2019/safeway-open/leaderboard.html"
 #tournament('safeway.csv', 'https://www.pgatour.com/competition/2019/safeway-open/leaderboard.html')
 #print(tournament.tname)	 
