@@ -24,8 +24,9 @@ def playerupdate(tournamentname, course):
     print(readtourneys['tournamentname'])
     if course in readtourneys['tournamentname'].to_list():
         print('ALREADY UPDATED!')
-  
     else:
+  
+    
     #1 read in the data and get it in a nice format
   
         tourneyscores = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + tournamentname + '.csv')
@@ -35,10 +36,11 @@ def playerupdate(tournamentname, course):
         newcols += holes
         #print(newcols)
         tourneyscores.columns = newcols
+        tourneyscores['name'] = tourneyscores['name'].str.lower()
 
         tourneyscores.set_index('name', inplace=True)
         tourneyscores.drop('index', axis=1, inplace=True)
-        #print(tourneyscores.head())
+        print(tourneyscores.head())
         #print('vhel')
         
         #2 for each player name, check if the csv exists and create it if it doesn't
@@ -47,6 +49,7 @@ def playerupdate(tournamentname, course):
             if os.path.exists('/Users/jonsa/OneDrive/Documents/code/players/' + str(player) + '.csv'):
                 pass
                 print(str(player) + ' player file already exists')
+                print(type(player))
             else:
                 print('creating file for ' + str(player))
                 df = pd.DataFrame(columns= playercols)
@@ -54,36 +57,48 @@ def playerupdate(tournamentname, course):
                 df.to_csv('/Users/jonsa/OneDrive/Documents/code/players/' + str(player) + '.csv')
         
         #3 for each player name create a list of lists comprised of hole number and score and round, making sure hole number is still correct after nans are removed
-
+            print('kjfljgdkflgj')
+            print(tourneyscores.index)
+            print(tourneyscores.index[2])
+            print(player)
+            print(tourneyscores.index[2] == player)
+            print('dfdfdgfhgfggnb')
             #newrows = tourneyscores.loc[player].values.tolist()
-            test = tourneyscores.loc[player]
-            #print(test)
+            test = tourneyscores.loc[str(player)]
+            '''#print(test)
+            print('kjfljgdkflgj')
+            print(tourneyscores.index)
+            print(tourneyscores.index[1])
+            print(player)
+            print(tourneyscores.index[2] == player)
+            print('dfdfdgfhgfggnb')
+            '''
             newrows = [[test.index[x]%18 , test[test.index[x]], (((test.index[x] - 1)//18) + 1)] for x in range(0, len(test))]
             for x in newrows:
                 if x[0] == 0:
                     x[0] += 18
             newrows = [x for x in newrows if str(x[1]) != "nan"]
             #newrows = [[y, x] for x in newrows if str(x) != "nan"]   [test.index[x], test[x]]
-            print(newrows)
+            #print(newrows)
         #create a dataframe with hole score and round
             holesandscores = pd.DataFrame(np.array(newrows), columns=['hole', 'score','round'])
         
         #this looks to be working up to here
     
         #3.1 import the course data and add par yards and average score to the player holes data
-            tourneyscores = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + course + 'course21.csv')
-            tourneyscores.index.name = 'ind2'
+            courseinfo = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + course + 'course21.csv')
+            courseinfo.index.name = 'ind2'
             #print(tourneyscores)
-            playerdatawithcourse = pd.merge(holesandscores, tourneyscores,  how='left', left_on=['hole'], right_on = ['hole'])
+            playerdatawithcourse = pd.merge(holesandscores, courseinfo,  how='left', left_on=['hole'], right_on = ['hole'])
             
             # add the date and location
             timeandplace = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + tournamentname + 'additionalinfo.csv')
             location = timeandplace.iloc[0]['location']
             dayone = datetime.strptime(timeandplace.iloc[0]['startdate'], '%Y-%m-%d')
             #dayone = timeandplace.iloc[0]['startdate']
-            print(type(dayone))
+            #print(type(dayone))
 
-            print(location)
+            #print(location)
             #print(playerdatawithcourse[round])
             playerdatawithcourse['location']= location
             #playerdatawithcourse['date'] = dayone + timedelta(days=(playerdatawithcourse['round'] - 1) )
@@ -91,18 +106,18 @@ def playerupdate(tournamentname, course):
             #rounddate = [dayone + timedelta(days=(int(roundnum) -1)) for roundnum in playerdatawithcourse[round]]
 
             playerdatawithcourse['date'] = [dayone + timedelta(days=(int(roundnum) -1)) for roundnum in playerdatawithcourse['round']]
-            print(playerdatawithcourse)
+            #print(playerdatawithcourse)
 
             weatherinfo = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/golfweather.csv')
             tournamentweather = weatherinfo.loc[weatherinfo['tournament-w'] == course]
             
             finalplayerdata = pd.merge(playerdatawithcourse, tournamentweather,  how='left', left_on=['round'], right_on = ['round-w'])
             finalplayerdata.drop(['tournament-w', 'date-w' , 'round-w'], axis=1, inplace=True)
-            print(finalplayerdata)
+            #print(finalplayerdata)
 
             #3.4 add to the main player file
             extratournament = pd.DataFrame(np.array([[str(course)]]))
-            print(extratournament)
+            #print(extratournament)
             finalplayerdata.to_csv('/Users/jonsa/OneDrive/Documents/code/players/' + str(player) + '.csv', mode = 'a', header=False)
             # add the tournament to the read tournaments list
             with open('/Users/jonsa/OneDrive/Documents/code/tournamentsread.csv', 'a') as f:
@@ -111,7 +126,7 @@ def playerupdate(tournamentname, course):
 
 
 #playerupdate("Jan262022farmers-insurance-open", "farmers-insurance-open")
-playerupdate("Jan262022farmers-insurance-open", "farmers-insurance-open")
+playerupdate("Sep162021fortinet championship", "fortinet championship")
 
 
 #"Jan262022farmers-insurance-open.csv"
