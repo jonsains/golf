@@ -11,14 +11,18 @@ import pandas as pd
 import time
 from datetime import timedelta
 from datetime import datetime
-from os.path import exists 
+from os.path import exists
+from csv import writer
+
 '''
 extratournament = pd.DataFrame(np.array([['test-open']]), columns = ['tournamentname'])
 print(extratournament)
 extratournament.to_csv('/Users/jonsa/OneDrive/Documents/code/tournamentsread.csv')
 '''
+
 #create a function that creates/updates the player files
 def playerupdate(tournamentname, course):
+    
     #check this tournament hasn't been done before:
     readtourneys = pd.read_csv('tournamentsread.csv')
     print(readtourneys['tournamentname'])
@@ -41,13 +45,11 @@ def playerupdate(tournamentname, course):
         tourneyscores.set_index('name', inplace=True)
         tourneyscores.drop('index', axis=1, inplace=True)
         print(tourneyscores.head())
-        #print('vhel')
         
         #2 for each player name, check if the csv exists and create it if it doesn't
         playercols = ['hole','score','round', 'par', 'yards', 'average_score','location', 'date', 'temp', 'wind', 'rain']
         for player in tourneyscores.index:
             if os.path.exists('/Users/jonsa/OneDrive/Documents/code/players/' + str(player) + '.csv'):
-                pass
                 print(str(player) + ' player file already exists')
                 print(type(player))
             else:
@@ -65,14 +67,7 @@ def playerupdate(tournamentname, course):
             print('dfdfdgfhgfggnb')
             #newrows = tourneyscores.loc[player].values.tolist()
             test = tourneyscores.loc[str(player)]
-            '''#print(test)
-            print('kjfljgdkflgj')
-            print(tourneyscores.index)
-            print(tourneyscores.index[1])
-            print(player)
-            print(tourneyscores.index[2] == player)
-            print('dfdfdgfhgfggnb')
-            '''
+            
             newrows = [[test.index[x]%18 , test[test.index[x]], (((test.index[x] - 1)//18) + 1)] for x in range(0, len(test))]
             for x in newrows:
                 if x[0] == 0:
@@ -120,8 +115,11 @@ def playerupdate(tournamentname, course):
             #print(extratournament)
             finalplayerdata.to_csv('/Users/jonsa/OneDrive/Documents/code/players/' + str(player) + '.csv', mode = 'a', header=False)
             # add the tournament to the read tournaments list
-            with open('/Users/jonsa/OneDrive/Documents/code/tournamentsread.csv', 'a') as f:
-                extratournament.to_csv(f, header=False)
+    
+    with open('/Users/jonsa/OneDrive/Documents/code/tournamentsread.csv', 'a') as f:
+        writerobject = writer(f)
+        writerobject.writerow(['',course])
+        f.close()
 
 
 

@@ -302,7 +302,7 @@ def course(tname):
 
 
 #[, 'Valspar Championship', 'World Golf Championships-Dell Technologies Match Play', 'Corales Puntacana Championship', 'Valero Texas Open', 'Masters Tournament', 'RBC Heritage', 'Zurich Classic of New Orleans', 'Mexico Open at Vidanta', 'Wells Fargo Championship', 'AT&T Byron Nelson', 'PGA Championship', 'Charles Schwab Challenge', 'the Memorial Tournament presented by Workday', 'RBC Canadian Open', 'U.S. Open', 'Travelers Championship', 'John Deere Classic', 'Barbasol Championship', 'Genesis Scottish Open', 'Barracuda Championship', 'The Open Championship', '3M Open', 'Rocket Mortgage Classic', 'Wyndham Championship', 'FedEx St. Jude Championship', 'BMW Championship', 'TOUR Championship']
-schedule = ['Puerto Rico Open', 'Arnold Palmer Invitational presented by Mastercard', 'THE PLAYERS Championship']
+schedule = ['bmw-championship']
 for i in schedule:
 	try:
 		tournament(i)

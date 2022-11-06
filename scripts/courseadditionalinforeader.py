@@ -9,35 +9,10 @@ import pandas as pd
 import time
 from datetime import timedelta
 from datetime import datetime
-'''
-address = "https://www.pgatour.com/competition/2019/safeway-open/leaderboard.html"
-website = requests.get(address)
-soup = BeautifulSoup(website.content, "html.parser")
-browser = webdriver.Firefox()
-rounds = []
-rounddata = soup.find_all("td", class_="row-title")
-for i in rounddata:
-	rounds.append(i.get_text())
-
-print(rounds)
 
 
-'''
-#class="truste_overlay"
 
 browser = webdriver.Chrome() 
-#url = "https://www.pgatour.com/competition/2019/safeway-open/leaderboard.html"
-#browser.get(url) 
-#WebDriverWait(browser,10).until(EC.frame_to_be_available_and_switch_to_it((By.XPATH,'//iframe[@title="TrustArc Cookie Consent Manager"]')))
-#WebDriverWait(browser,30).until(EC.element_to_be_clickable((By.XPATH,'//button[@class="onetrust-close-btn-handler onetrust-close-btn-ui banner-close-button onetrust-lg ot-close-icon"]'))).click()
-#browser.implicitly_wait(10)
-#frame_reference = browser.find_element_by_id("pop-frame008392052294596386")
-#browser.switch_to.frame(frame_reference)
-#cookieclose = browser.find_element_by_xpath("//a[@class = 'close']")
-#cookieclose = WebDriverWait(browser,10).until(EC.element_to_be_clickable((By.XPATH,"//a[@class='close']")))
-#cookieclose.click()
-#browser.switch_to.default_content()
-
 
 def getinfo():
 	rounddata = {}
@@ -208,8 +183,8 @@ def get_year_sched(url):
 		tourneylist.append(i.text)
 	return tourneylist
 
-#schedule = get_year_sched('https://www.pgatour.com/tournaments/schedule.html')
-#print(schedule)
+schedule = get_year_sched('https://www.pgatour.com/tournaments/schedule.html')
+print(schedule)
 
 	
 
@@ -293,19 +268,19 @@ def course(tname):
 	for i in scoreav:
 		aves.append(i.text.split()[0])
 	df2 = pd.DataFrame({'hole': h, 'par': p, 'yards': y, 'averagescore': aves})
-	df2.to_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + tnameurl + 'course21.csv', encoding='utf-8', index=False)
+	df2.to_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + tname + 'course21.csv', encoding='utf-8', index=False)
 
 #tournament('shriners-childrens-open')
 
-#['Fortinet Championship', 'Ryder Cup', 'Sanderson Farms Championship', "Shriners Children's Open", 'THE CJ CUP @ SUMMIT', 'ZOZO CHAMPIONSHIP', 'Butterfield Bermuda Championship', 'World Wide Technology Championship at Mayakoba', 'Hewlett Packard Enterprise Houston Open', 'The RSM Classic', 'Hero World Challenge', 'QBE Shootout', 'Sentry Tournament of Champions', 'Sony Open in Hawaii', 'The American Express', 'Farmers Insurance Open', 'AT&T Pebble Beach Pro-Am', 'WM Phoenix Open', 'The Genesis Invitational', 'The Honda Classic', 'Puerto Rico Open', 'Arnold Palmer Invitational presented by Mastercard', 'THE PLAYERS Championship', 'Valspar Championship', 'World Golf Championships-Dell Technologies Match Play', 'Corales Puntacana Championship', 'Valero Texas Open', 'Masters Tournament', 'RBC Heritage', 'Zurich Classic of New Orleans', 'Mexico Open at Vidanta', 'Wells Fargo Championship', 'AT&T Byron Nelson', 'PGA Championship', 'Charles Schwab Challenge', 'the Memorial Tournament presented by Workday', 'RBC Canadian Open', 'U.S. Open', 'Travelers Championship', 'John Deere Classic', 'Barbasol Championship', 'Genesis Scottish Open', 'Barracuda Championship', 'The Open Championship', '3M Open', 'Rocket Mortgage Classic', 'Wyndham Championship', 'FedEx St. Jude Championship', 'BMW Championship', 'TOUR Championship']
+
 #course('farmers-insurance-open'.lower())
 
 
-#[, 'Barbasol Championship', 'Genesis Scottish Open', 'Barracuda Championship', 'The Open Championship', '3M Open', 'Rocket Mortgage Classic', 'Wyndham Championship', 'FedEx St. Jude Championship', 'BMW Championship', 'TOUR Championship']
-schedule = ['Fortinet Championship', 'Ryder Cup', 'Sanderson Farms Championship', "Shriners Children's Open", 'THE CJ CUP @ SUMMIT', 'ZOZO CHAMPIONSHIP', 'Butterfield Bermuda Championship', 'World Wide Technology Championship at Mayakoba', 'Hewlett Packard Enterprise Houston Open', 'The RSM Classic', 'Hero World Challenge', 'QBE Shootout', 'Sentry Tournament of Champions', 'Sony Open in Hawaii', 'The American Express', 'Farmers Insurance Open', 'WM Phoenix Open', 'The Genesis Invitational', 'The Honda Classic', 'Puerto Rico Open', 'Arnold Palmer Invitational presented by Mastercard', 'THE PLAYERS Championship', 'Valspar Championship', 'Corales Puntacana Championship', 'Valero Texas Open', 'Masters Tournament', 'RBC Heritage', 'Zurich Classic of New Orleans', 'Mexico Open at Vidanta', 'Wells Fargo Championship', 'AT&T Byron Nelson', 'PGA Championship', 'Charles Schwab Challenge', 'the Memorial Tournament presented by Workday', 'RBC Canadian Open', 'US Open', 'Travelers Championship', 'John Deere Classic']
+#[, 'Valspar Championship', 'World Golf Championships-Dell Technologies Match Play', 'Corales Puntacana Championship', 'Valero Texas Open', 'Masters Tournament', 'RBC Heritage', 'Zurich Classic of New Orleans', 'Mexico Open at Vidanta', 'Wells Fargo Championship', 'AT&T Byron Nelson', 'PGA Championship', 'Charles Schwab Challenge', 'the Memorial Tournament presented by Workday', 'RBC Canadian Open', 'U.S. Open', 'Travelers Championship', 'John Deere Classic', 'Barbasol Championship', 'Genesis Scottish Open', 'Barracuda Championship', 'The Open Championship', '3M Open', 'Rocket Mortgage Classic', 'Wyndham Championship', 'FedEx St. Jude Championship', 'BMW Championship', 'TOUR Championship']
+schedule = ['bmw-championship']
 for i in schedule:
 	try:
-		course(i)
+		tournament(i)
 	except:
 		print(i + ' fail')
 	
