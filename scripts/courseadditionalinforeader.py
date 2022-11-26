@@ -280,7 +280,8 @@ def course(tname):
 schedule = ['bmw-championship']
 for i in schedule:
 	try:
-		tournament(i)
+		#tournament(i)
+		course('shriners-childrens-open')
 	except:
 		print(i + ' fail')
 	

@@ -10,7 +10,7 @@ import time
 from datetime import timedelta
 from datetime import datetime
 
-tname = 'fedex-st-jude-championship'
+tname = 'sanderson-farms-championship'
 
 #step 1: Open a browser and close cookies
 def pga_page_load(url):
@@ -102,7 +102,7 @@ def playersloop():
 
 
 
-pga_page_load('https://www.pgatour.com/competition/2022/' + tname + '/leaderboard.html')
+pga_page_load('https://www.pgatour.com/competition/2023/' + tname + '/leaderboard.html')
 dfdata = playersloop()
 df = pd.DataFrame(dfdata)
 dates = WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.XPATH,"//span[@class='dates']"))).text

@@ -24,7 +24,7 @@ extratournament.to_csv('/Users/jonsa/OneDrive/Documents/code/tournamentsread.csv
 def playerupdate(tournamentname, course):
     
     #check this tournament hasn't been done before:
-    readtourneys = pd.read_csv('tournamentsread.csv')
+    readtourneys = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/tournamentsread.csv')
     print(readtourneys['tournamentname'])
     if course in readtourneys['tournamentname'].to_list():
         print('ALREADY UPDATED!')
@@ -60,30 +60,41 @@ def playerupdate(tournamentname, course):
         
         #3 for each player name create a list of lists comprised of hole number and score and round, making sure hole number is still correct after nans are removed
             print('kjfljgdkflgj')
-            print(tourneyscores.index)
-            print(tourneyscores.index[2])
-            print(player)
-            print(tourneyscores.index[2] == player)
-            print('dfdfdgfhgfggnb')
+            #print(tourneyscores.index)
+            #print(tourneyscores.index[2])
+            #print(player)
+            #print(tourneyscores.index[2] == player)
+            #print('dfdfdgfhgfggnb')
             #newrows = tourneyscores.loc[player].values.tolist()
             test = tourneyscores.loc[str(player)]
             
-            newrows = [[test.index[x]%18 , test[test.index[x]], (((test.index[x] - 1)//18) + 1)] for x in range(0, len(test))]
+            newrows = [[int(test.index[x]%18) , test[test.index[x]], (((test.index[x] - 1)//18) + 1)] for x in range(0, len(test))]
             for x in newrows:
                 if x[0] == 0:
                     x[0] += 18
             newrows = [x for x in newrows if str(x[1]) != "nan"]
             #newrows = [[y, x] for x in newrows if str(x) != "nan"]   [test.index[x], test[x]]
-            #print(newrows)
+            print('heres ')
+            print(newrows)
         #create a dataframe with hole score and round
             holesandscores = pd.DataFrame(np.array(newrows), columns=['hole', 'score','round'])
+            holesandscores['hole'] = pd.to_numeric(holesandscores['hole'])
+            print('now')
+            print(holesandscores['hole'])
         
         #this looks to be working up to here
     
         #3.1 import the course data and add par yards and average score to the player holes data
-            courseinfo = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/tournaments/' + course + 'course21.csv')
+            courseinfo = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/courses/' + course + 'course21.csv')
             courseinfo.index.name = 'ind2'
-            #print(tourneyscores)
+            print('a')
+            print(courseinfo['hole'])
+            print('b')
+            print(holesandscores['hole'])
+            #print('c')
+            #print(type(courseinfo['hole']))
+            #print('d')
+            #print(type(holesandscores['hole']))
             playerdatawithcourse = pd.merge(holesandscores, courseinfo,  how='left', left_on=['hole'], right_on = ['hole'])
             
             # add the date and location
@@ -105,7 +116,11 @@ def playerupdate(tournamentname, course):
 
             weatherinfo = pd.read_csv('/Users/jonsa/OneDrive/Documents/code/golfweather.csv')
             tournamentweather = weatherinfo.loc[weatherinfo['tournament-w'] == course]
-            
+            print('a')
+            print(playerdatawithcourse['round'])
+            print('b')
+            playerdatawithcourse['round'] = pd.to_numeric(playerdatawithcourse['round'])
+            print(tournamentweather['round-w'])
             finalplayerdata = pd.merge(playerdatawithcourse, tournamentweather,  how='left', left_on=['round'], right_on = ['round-w'])
             finalplayerdata.drop(['tournament-w', 'date-w' , 'round-w'], axis=1, inplace=True)
             #print(finalplayerdata)
@@ -124,7 +139,7 @@ def playerupdate(tournamentname, course):
 
 
 #playerupdate("Jan262022farmers-insurance-open", "farmers-insurance-open")
-playerupdate("Sep162021fortinet championship", "fortinet championship")
+playerupdate("Oct072021shriners-childrens-open", "shriners-childrens-open")
 
 
 #"Jan262022farmers-insurance-open.csv"
